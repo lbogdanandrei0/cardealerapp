@@ -2,6 +2,9 @@ package com.lbogdanandrei.cardealerapp.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
@@ -9,12 +12,13 @@ import java.math.BigInteger;
 
 @Getter
 @Setter
+@ToString
 @Entity(name = "car")
 public class CarModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private int id;
 
     @Column
     @NonNull
@@ -22,9 +26,11 @@ public class CarModel {
 
     @Column
     @NonNull
+    @Enumerated(EnumType.STRING)
     private CarBrand brand;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private CarType type;
 
     @Column
@@ -45,7 +51,6 @@ public class CarModel {
     @Column
     private float price;
 
-    @Column
-    @Lob
+    @Column(name = "description")
     private String description;
 }
