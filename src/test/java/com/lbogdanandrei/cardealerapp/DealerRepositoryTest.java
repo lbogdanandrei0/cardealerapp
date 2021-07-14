@@ -21,7 +21,7 @@ public class DealerRepositoryTest {
 
     @Test
     public void findAll_shouldGetAllRecords() {
-        Assertions.assertEquals(dealerRepository.findAll().size(), dealerRepository.getNrOfRecords().intValue());
+        Assertions.assertEquals(dealerRepository.findAll().size(), dealerRepository.getNrOfRecords());
     }
 
 }

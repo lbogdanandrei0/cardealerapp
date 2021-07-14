@@ -9,5 +9,5 @@ import java.math.BigInteger;
 public interface DealerRepository extends JpaRepository<DealerModel, BigInteger> {
 
     @Query(value = "select count(id) from dealer")
-    public BigInteger getNrOfRecords();
+    public int getNrOfRecords();
 }

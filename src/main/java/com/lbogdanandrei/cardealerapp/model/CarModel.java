@@ -22,7 +22,7 @@ public class CarModel {
 
     @Column
     @NonNull
-    private BigInteger location;
+    private int location;
 
     @Column
     @NonNull
@@ -40,10 +40,10 @@ public class CarModel {
     private boolean had_accident;
 
     @Column
-    private short engine_capacity;
+    private int engine_capacity;
 
     @Column
-    private short engine_power;
+    private int engine_power;
 
     @Column
     private java.sql.Date date_of_fabrication;

@@ -18,7 +18,7 @@ public class DealerService {
         return dealerRepository.findAll();
     }
 
-    public BigInteger getNrOfRecords(){
+    public int getNrOfRecords(){
         return dealerRepository.getNrOfRecords();
     }
 

@@ -1,4 +1,3 @@
-
 insert into dealer (name, address) values
                    ('d1', 'adr1'),
                    ('d2', 'adr2');
