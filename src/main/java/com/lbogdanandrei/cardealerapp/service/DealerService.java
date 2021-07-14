@@ -1,5 +1,6 @@
 package com.lbogdanandrei.cardealerapp.service;
 
+import com.lbogdanandrei.cardealerapp.exceptions.DealerAlreadyExist;
 import com.lbogdanandrei.cardealerapp.model.DealerModel;
 import com.lbogdanandrei.cardealerapp.model.dto.CarDTO;
 import com.lbogdanandrei.cardealerapp.model.dto.DealerDTO;
@@ -32,13 +33,19 @@ public class DealerService {
         return dealerRepository.findDealerByAddress(adr);
     }
 
+    public int getDealerIdFromAdress(String adr){
+        return findDealerByAddress(adr).getId();
+    }
+
     public List<DealerDTO> getAllDealersDTO(){
         return getAllDealers().stream()
                 .map(DealerMapper.INSTANCE::dealerToDealerDto)
                 .collect(Collectors.toList());
     }
 
-    public DealerDTO saveNewDealer(DealerDTO dealer) {
+    public DealerDTO saveNewDealer(DealerDTO dealer) throws DealerAlreadyExist {
+        if(findDealerByAddress(dealer.getAddress()) != null)
+            throw new DealerAlreadyExist();
         DealerModel toSave = DealerMapper.INSTANCE.dealerDtotoDealer(dealer);
         toSave.setCreated_at(Timestamp.from(Instant.now()));
         return DealerMapper.INSTANCE.dealerToDealerDto(dealerRepository.save(toSave));

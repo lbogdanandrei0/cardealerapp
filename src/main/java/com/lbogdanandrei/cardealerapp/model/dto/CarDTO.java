@@ -12,14 +12,15 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class CarDTO implements Serializable {
-
-    private int id;
-
-    private int location;
+    private String location;
 
     private String brand;
 
     private boolean is_new;
+
+    private int engine_capacity;
+
+    private int engine_power;
 
     private java.sql.Date date_of_fabrication;
 

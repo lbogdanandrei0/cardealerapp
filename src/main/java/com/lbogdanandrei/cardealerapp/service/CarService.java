@@ -4,12 +4,12 @@ import com.lbogdanandrei.cardealerapp.model.CarBrand;
 import com.lbogdanandrei.cardealerapp.model.CarModel;
 import com.lbogdanandrei.cardealerapp.model.DealerModel;
 import com.lbogdanandrei.cardealerapp.model.dto.CarDTO;
-import com.lbogdanandrei.cardealerapp.model.dto.DealerDTO;
 import com.lbogdanandrei.cardealerapp.model.mapper.CarMapper;
 import com.lbogdanandrei.cardealerapp.repository.CarRepositoy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -61,16 +61,31 @@ public class CarService {
     }
 
     public List<CarDTO> getCarsFromDealer(DealerModel dealer) {
-        return  findCarByLocation(dealer.getId())
+        List<CarDTO> toReturn = findCarByLocation(dealer.getId())
                 .stream()
                 .map(CarMapper.INSTANCE::carToCarDto)
                 .collect(Collectors.toList());
+        toReturn.forEach(car -> car.setLocation(dealer.getAddress()));
+        return toReturn;
     }
 
     public List<CarDTO> getAllCarsDTO(){
-        return getAllCars()
-                .stream()
-                .map(CarMapper.INSTANCE::carToCarDto)
-                .collect(Collectors.toList());
+        List<CarModel> cars = getAllCars();
+        List<CarDTO> toReturn = new ArrayList<>();
+        for(CarModel c:cars){
+            CarDTO dto = CarMapper.INSTANCE.carToCarDto(c);
+            dto.setLocation("dealer "+c.getLocation());
+            toReturn.add(dto);
+        }
+        return toReturn;
+    }
+
+    public CarDTO saveNewCar(CarDTO car, DealerModel dealer) {
+        CarModel toSave = new CarModel();
+        toSave = CarMapper.INSTANCE.carDtoToCar(car);
+        toSave.setLocation(dealer.getId());
+        CarDTO response = CarMapper.INSTANCE.carToCarDto(carRepositoy.save(toSave));
+        response.setLocation(dealer.getAddress());
+        return response;
     }
 }
