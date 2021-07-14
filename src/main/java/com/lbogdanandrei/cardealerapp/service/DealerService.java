@@ -1,12 +1,18 @@
 package com.lbogdanandrei.cardealerapp.service;
 
 import com.lbogdanandrei.cardealerapp.model.DealerModel;
+import com.lbogdanandrei.cardealerapp.model.dto.CarDTO;
+import com.lbogdanandrei.cardealerapp.model.dto.DealerDTO;
+import com.lbogdanandrei.cardealerapp.model.mapper.DealerMapper;
 import com.lbogdanandrei.cardealerapp.repository.DealerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DealerService {
@@ -26,4 +32,15 @@ public class DealerService {
         return dealerRepository.findDealerByAddress(adr);
     }
 
+    public List<DealerDTO> getAllDealersDTO(){
+        return getAllDealers().stream()
+                .map(DealerMapper.INSTANCE::dealerToDealerDto)
+                .collect(Collectors.toList());
+    }
+
+    public DealerDTO saveNewDealer(DealerDTO dealer) {
+        DealerModel toSave = DealerMapper.INSTANCE.dealerDtotoDealer(dealer);
+        toSave.setCreated_at(Timestamp.from(Instant.now()));
+        return DealerMapper.INSTANCE.dealerToDealerDto(dealerRepository.save(toSave));
+    }
 }
