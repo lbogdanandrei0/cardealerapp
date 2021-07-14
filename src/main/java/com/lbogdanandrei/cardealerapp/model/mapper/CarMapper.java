@@ -13,10 +13,20 @@ public interface CarMapper {
     CarMapper INSTANCE = Mappers.getMapper(CarMapper.class);
 
     @Mappings({
-            @Mapping(source = "id", target = "id"),
-            @Mapping(source = "location", target = "location"),
+            @Mapping(target = "location", ignore = true),
             @Mapping(source = "brand", target = "brand"),
             @Mapping(source = "_new", target = "_new"),
+            @Mapping(source = "engine_power", target = "engine_power"),
+            @Mapping(source = "engine_capacity", target = "engine_capacity"),
     })
     CarDTO carToCarDto(CarModel car);
+
+    @Mappings({
+            @Mapping(target = "location", ignore = true),
+            @Mapping(source = "brand", target = "brand"),
+            @Mapping(source = "_new", target = "_new"),
+            @Mapping(source = "engine_power", target = "engine_power"),
+            @Mapping(source = "engine_capacity", target = "engine_capacity"),
+    })
+    CarModel carDtoToCar(CarDTO car);
 }
