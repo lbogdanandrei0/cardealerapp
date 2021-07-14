@@ -2,12 +2,17 @@ package com.lbogdanandrei.cardealerapp.service;
 
 import com.lbogdanandrei.cardealerapp.model.CarBrand;
 import com.lbogdanandrei.cardealerapp.model.CarModel;
+import com.lbogdanandrei.cardealerapp.model.DealerModel;
+import com.lbogdanandrei.cardealerapp.model.dto.CarDTO;
+import com.lbogdanandrei.cardealerapp.model.dto.DealerDTO;
+import com.lbogdanandrei.cardealerapp.model.mapper.CarMapper;
 import com.lbogdanandrei.cardealerapp.repository.CarRepositoy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CarService {
@@ -53,5 +58,19 @@ public class CarService {
 
     public List<CarModel> findCarWithYearOfFabricationBetween(int min, int max){
         return carRepositoy.findCarWithYearOfFabricationBetween(min, max);
+    }
+
+    public List<CarDTO> getCarsFromDealer(DealerModel dealer) {
+        return  findCarByLocation(dealer.getId())
+                .stream()
+                .map(CarMapper.INSTANCE::carToCarDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<CarDTO> getAllCarsDTO(){
+        return getAllCars()
+                .stream()
+                .map(CarMapper.INSTANCE::carToCarDto)
+                .collect(Collectors.toList());
     }
 }

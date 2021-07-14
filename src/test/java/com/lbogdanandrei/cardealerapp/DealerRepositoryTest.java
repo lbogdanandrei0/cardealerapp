@@ -1,5 +1,7 @@
 package com.lbogdanandrei.cardealerapp;
 
+import com.lbogdanandrei.cardealerapp.model.DealerModel;
+import com.lbogdanandrei.cardealerapp.model.dto.DealerDTO;
 import com.lbogdanandrei.cardealerapp.repository.DealerRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
