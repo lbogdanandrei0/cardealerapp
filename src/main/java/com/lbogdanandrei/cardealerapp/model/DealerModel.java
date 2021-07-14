@@ -5,7 +5,6 @@ import lombok.Setter;
 import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
-import java.math.BigInteger;
 
 @Getter
 @Setter
@@ -14,13 +13,13 @@ public class DealerModel {
 
     @Id
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
-    private BigInteger id;
+    private int id;
 
     @Column
     @NonNull
     private String name;
 
-    @Column
+    @Column(unique = true)
     @NonNull
     private String address;
 
