@@ -8,6 +8,8 @@ import org.hibernate.annotations.TypeDef;
 import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
 import java.math.BigInteger;
 
 @Getter
@@ -40,15 +42,18 @@ public class CarModel {
     private boolean hadAccident;
 
     @Column(name = "engine_capacity")
+    @Positive
     private int engineCapacity;
 
     @Column(name = "engine_power")
+    @Positive
     private int enginePower;
 
     @Column(name = "date_of_fabrication")
     private java.sql.Date dateOfFabrication;
 
     @Column(name = "price")
+    @Positive
     private float price;
 
     @Column(name = "description")

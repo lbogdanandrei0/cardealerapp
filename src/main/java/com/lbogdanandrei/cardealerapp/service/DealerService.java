@@ -32,7 +32,7 @@ public class DealerService {
         return dealerRepository.findDealerByAddress(adr).orElseThrow(DealerNotFoundException::new);
     }
 
-    public int getDealerIdFromAdress(String adr){
+    public int getDealerIdFromAddress(String adr){
         return findDealerByAddress(adr).getId();
     }
 
@@ -43,10 +43,13 @@ public class DealerService {
     }
 
     public DealerDTO saveNewDealer(DealerDTO dealer) throws DealerAlreadyExistsException {
-        if(findDealerByAddress(dealer.getAddress()) != null)
+        try{
+            findDealerByAddress(dealer.getAddress());
             throw new DealerAlreadyExistsException();
-        DealerModel toSave = DealerMapper.INSTANCE.dealerDtotoDealer(dealer);
-        toSave.setCreated_at(Timestamp.from(Instant.now()));
-        return DealerMapper.INSTANCE.dealerToDealerDto(dealerRepository.save(toSave));
+        }catch(DealerNotFoundException e){
+            DealerModel toSave = DealerMapper.INSTANCE.dealerDtotoDealer(dealer);
+            toSave.setCreated_at(Timestamp.from(Instant.now()));
+            return DealerMapper.INSTANCE.dealerToDealerDto(dealerRepository.save(toSave));
+        }
     }
 }

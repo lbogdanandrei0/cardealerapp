@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface DealerRepository extends JpaRepository<DealerModel, BigInteger> {
 
     @Query(value = "select count(id) from dealer")
-    public int getNrOfRecords();
+    int getNrOfRecords();
 
-    public Optional<DealerModel> findDealerByAddress(String address);
+    Optional<DealerModel> findDealerByAddress(String address);
 }
