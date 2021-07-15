@@ -28,8 +28,8 @@ public class DealerRepositoryTest {
 
     @Test
     public void findDealerByAddress_shouldGetDealerByAddress(){
-        Assertions.assertEquals("adr1", dealerRepository.findDealerByAddress("adr1").getAddress());
-        Assertions.assertEquals("adr2", dealerRepository.findDealerByAddress("adr2").getAddress());
+        Assertions.assertEquals("adr1", dealerRepository.findDealerByAddress("adr1").get().getAddress());
+        Assertions.assertEquals("adr2", dealerRepository.findDealerByAddress("adr2").get().getAddress());
     }
 
 }

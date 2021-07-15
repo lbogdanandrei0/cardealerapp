@@ -85,13 +85,13 @@ public class CarServiceTest {
     @Test
     public void findCarByEnginePower_shouldGetAllCarsWithEnginePowerSpecified(){
         List<CarModel> cars = carService.findCarWithEnginePowerBetween(100, 300);
-        cars.stream().forEach(car -> Assertions.assertTrue(car.getEngine_power() >= 100 && car.getEngine_power() <= 300));
+        cars.stream().forEach(car -> Assertions.assertTrue(car.getEnginePower() >= 100 && car.getEnginePower() <= 300));
         cars = carService.findCarWithEnginePowerBetween(0, 600);
-        cars.stream().forEach(car -> Assertions.assertTrue(car.getEngine_power() >= 0 && car.getEngine_power() <= 600));
+        cars.stream().forEach(car -> Assertions.assertTrue(car.getEnginePower() >= 0 && car.getEnginePower() <= 600));
         cars = carService.findCarWithEnginePowerBetween(Integer.MIN_VALUE, 220);
-        cars.stream().forEach(car -> Assertions.assertTrue(car.getEngine_power() >= Integer.MIN_VALUE && car.getEngine_power() <= 220));
+        cars.stream().forEach(car -> Assertions.assertTrue(car.getEnginePower() >= Integer.MIN_VALUE && car.getEnginePower() <= 220));
         cars = carService.findCarWithEnginePowerBetween(0, Integer.MAX_VALUE);
-        cars.stream().forEach(car -> Assertions.assertTrue(car.getEngine_power() >= 0 && car.getEngine_power() <= Integer.MAX_VALUE));
+        cars.stream().forEach(car -> Assertions.assertTrue(car.getEnginePower() >= 0 && car.getEnginePower() <= Integer.MAX_VALUE));
         cars = carService.findCarWithEnginePowerBetween(Integer.MIN_VALUE, Integer.MAX_VALUE);
         Assertions.assertEquals(carService.getAllCars().size(), cars.size());
     }
@@ -99,13 +99,13 @@ public class CarServiceTest {
     @Test
     public void findCarByEngineCapacity_shouldGetAllCarsWithEngineCapacitySpecified(){
         List<CarModel> cars = carService.findCarWithEngineCapacityBetween(800, 2200);
-        cars.stream().forEach(car -> Assertions.assertTrue(car.getEngine_capacity() >= 800 && car.getEngine_capacity() <= 2200));
+        cars.stream().forEach(car -> Assertions.assertTrue(car.getEngineCapacity() >= 800 && car.getEngineCapacity() <= 2200));
         cars = carService.findCarWithEngineCapacityBetween(2000, 5000);
-        cars.stream().forEach(car -> Assertions.assertTrue(car.getEngine_capacity() >= 2000 && car.getEngine_capacity() <= 5000));
+        cars.stream().forEach(car -> Assertions.assertTrue(car.getEngineCapacity() >= 2000 && car.getEngineCapacity() <= 5000));
         cars = carService.findCarWithEngineCapacityBetween(Integer.MIN_VALUE, 2000);
-        cars.stream().forEach(car -> Assertions.assertTrue(car.getEngine_capacity() >= Integer.MIN_VALUE && car.getEngine_capacity() <= 2000));
+        cars.stream().forEach(car -> Assertions.assertTrue(car.getEngineCapacity() >= Integer.MIN_VALUE && car.getEngineCapacity() <= 2000));
         cars = carService.findCarWithEngineCapacityBetween(2000, Integer.MAX_VALUE);
-        cars.stream().forEach(car -> Assertions.assertTrue(car.getEngine_capacity() >= 2000 && car.getEngine_capacity() <= Integer.MAX_VALUE));
+        cars.stream().forEach(car -> Assertions.assertTrue(car.getEngineCapacity() >= 2000 && car.getEngineCapacity() <= Integer.MAX_VALUE));
         cars = carService.findCarWithEngineCapacityBetween(Integer.MIN_VALUE, Integer.MAX_VALUE);
         Assertions.assertEquals(carService.getAllCars().size(), cars.size());
     }
@@ -113,19 +113,19 @@ public class CarServiceTest {
     @Test
     public void findCarByIsNew_shouldGetAllNewCars(){
         List<CarModel> cars = carService.findAllNewCars();
-        cars.stream().forEach(car -> Assertions.assertEquals(true, car.is_new()));
+        cars.stream().forEach(car -> Assertions.assertEquals(true, car.isNew()));
     }
 
     @Test
     public void findCarByIsNew_shouldGetAllShCars(){
         List<CarModel> cars = carService.findAllShCars();
-        cars.stream().forEach(car -> Assertions.assertEquals(false, car.is_new()));
+        cars.stream().forEach(car -> Assertions.assertEquals(false, car.isNew()));
     }
 
     @Test
     public void findCarByHadAccident_shouldGetAllCarsWithoutCrash(){
         List<CarModel> cars = carService.findAllCarsWithoutCrash();
-        cars.stream().forEach(car -> Assertions.assertEquals(false, car.isHad_accident()));
+        cars.stream().forEach(car -> Assertions.assertEquals(false, car.isHadAccident()));
     }
 
     @Test
@@ -133,12 +133,12 @@ public class CarServiceTest {
         System.out.println(LocalDate.MIN.getYear() + " " + LocalDate.MAX.getYear());
         List<CarModel> cars = carService.findCarWithYearOfFabricationBetween(2010, 2021);
         cars.stream().forEach(car -> Assertions.assertTrue(
-                car.getDate_of_fabrication().toLocalDate().getYear() >= 2010 &&
-                         car.getDate_of_fabrication().toLocalDate().getYear() <= 2021));
+                car.getDateOfFabrication().toLocalDate().getYear() >= 2010 &&
+                         car.getDateOfFabrication().toLocalDate().getYear() <= 2021));
         cars = carService.findCarWithYearOfFabricationBetween(LocalDate.MIN.getYear(), 2021);
         cars.stream().forEach(car -> Assertions.assertTrue(
-                car.getDate_of_fabrication().toLocalDate().getYear() >= LocalDate.MIN.getYear() &&
-                        car.getDate_of_fabrication().toLocalDate().getYear() <= 2021));
+                car.getDateOfFabrication().toLocalDate().getYear() >= LocalDate.MIN.getYear() &&
+                        car.getDateOfFabrication().toLocalDate().getYear() <= 2021));
         cars = carService.findCarWithYearOfFabricationBetween(LocalDate.MIN.getYear(), LocalDate.MAX.getYear());
         Assertions.assertEquals(carService.getAllCars().size(), cars.size()); //TODO filter expected stream for null values
     }

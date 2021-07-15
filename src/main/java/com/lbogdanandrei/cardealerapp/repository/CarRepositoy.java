@@ -13,11 +13,11 @@ import java.util.Optional;
 
 public interface CarRepositoy extends JpaRepository<CarModel, BigInteger> {
 
-    public List<CarModel> findCarByBrand(CarBrand brand);
+    List<CarModel> findCarByBrand(CarBrand brand);
 
     public Optional<CarModel> findCarById(int id);
 
-    public List<CarModel> findCarByLocation(int location);
+    List<CarModel> findCarByLocation(int location);
 
     @Query("from car where engine_capacity >= :minimum and engine_capacity <= :maximum")
     public List<CarModel> findCarWithEngineCapacityBetween(@Param("minimum") int min,
@@ -37,5 +37,5 @@ public interface CarRepositoy extends JpaRepository<CarModel, BigInteger> {
     public List<CarModel> findCarWithYearOfFabricationBetween(@Param("minYear") int min,
                                                               @Param("maxYear") int max);
 
-    //TODO query with date of fabrication
+    Optional<CarModel> findCarByVin(String vin);
 }

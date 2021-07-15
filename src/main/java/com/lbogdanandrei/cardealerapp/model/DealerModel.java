@@ -15,7 +15,7 @@ public class DealerModel {
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private int id;
 
-    @Column
+    @Column(name = "name")
     @NonNull
     private String name;
 
@@ -23,6 +23,6 @@ public class DealerModel {
     @NonNull
     private String address;
 
-    @Column(columnDefinition = "default CURRENT_TIMESTAMP")
+    @Column(name = "created_at", columnDefinition = "default CURRENT_TIMESTAMP")
     private java.sql.Timestamp created_at;
 }

@@ -1,0 +1,1 @@
+alter table car add column vin varchar(17) unique;

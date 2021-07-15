@@ -16,13 +16,15 @@ public class CarDTO implements Serializable {
 
     private String brand;
 
-    private boolean is_new;
+    private boolean isNew;
 
-    private int engine_capacity;
+    private int engineCapacity;
 
-    private int engine_power;
+    private int enginePower;
 
-    private java.sql.Date date_of_fabrication;
+    private java.sql.Date dateOfFabrication;
 
     private float price;
+
+    private String vin;
 }

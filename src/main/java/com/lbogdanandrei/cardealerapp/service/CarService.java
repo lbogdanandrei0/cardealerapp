@@ -1,5 +1,6 @@
 package com.lbogdanandrei.cardealerapp.service;
 
+import com.lbogdanandrei.cardealerapp.exceptions.CarAlreadyExistsException;
 import com.lbogdanandrei.cardealerapp.model.CarBrand;
 import com.lbogdanandrei.cardealerapp.model.CarModel;
 import com.lbogdanandrei.cardealerapp.model.DealerModel;
@@ -80,9 +81,10 @@ public class CarService {
         return toReturn;
     }
 
-    public CarDTO saveNewCar(CarDTO car, DealerModel dealer) {
-        CarModel toSave = new CarModel();
-        toSave = CarMapper.INSTANCE.carDtoToCar(car);
+    public CarDTO saveNewCar(CarDTO car, DealerModel dealer) throws CarAlreadyExistsException {
+        if(carRepositoy.findCarByVin(car.getVin()).isPresent())
+            throw new CarAlreadyExistsException();
+        CarModel toSave = CarMapper.INSTANCE.carDtoToCar(car);
         toSave.setLocation(dealer.getId());
         CarDTO response = CarMapper.INSTANCE.carToCarDto(carRepositoy.save(toSave));
         response.setLocation(dealer.getAddress());
