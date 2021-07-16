@@ -4,14 +4,22 @@ import com.lbogdanandrei.cardealerapp.exceptions.InvalidTokenException;
 import com.lbogdanandrei.cardealerapp.exceptions.UserNotFoundException;
 import com.lbogdanandrei.cardealerapp.model.TokenModel;
 import com.lbogdanandrei.cardealerapp.model.UserModel;
+import com.lbogdanandrei.cardealerapp.model.dto.AuthentificationResponse;
+import com.lbogdanandrei.cardealerapp.model.dto.LoginRequestDTO;
 import com.lbogdanandrei.cardealerapp.model.dto.RegisterRequestDTO;
 import com.lbogdanandrei.cardealerapp.repository.TokenRepository;
 import com.lbogdanandrei.cardealerapp.repository.UserRepository;
-import lombok.experimental.Tolerate;
+import com.lbogdanandrei.cardealerapp.security.JwtGenerator;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,6 +34,12 @@ public class AuthService {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthenticationManager authentificationManager;
+
+    @Autowired
+    private JwtGenerator jwtGenerator;
 
     public void register(RegisterRequestDTO request){
         UserModel toRegister = new UserModel();
@@ -62,5 +76,16 @@ public class AuthService {
         }else{
             throw new UserNotFoundException(user.get());
         }
+    }
+
+    public AuthentificationResponse login(LoginRequestDTO requestBody) {
+        Authentication auth = authentificationManager.authenticate(new UsernamePasswordAuthenticationToken(requestBody.getEmail(), requestBody.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        String token = jwtGenerator.generateToken(auth);
+        return AuthentificationResponse.builder()
+                .token(token)
+                .email(requestBody.getEmail())
+                .expiryAt(Timestamp.from(Instant.now().plusMillis(JwtGenerator.jwtExpirationInMillis)))
+                .build();
     }
 }

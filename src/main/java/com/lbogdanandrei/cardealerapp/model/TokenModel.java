@@ -25,5 +25,6 @@ public class TokenModel {
     private UserModel user;
 
     @Column(name = "expiry_date", columnDefinition = "default CURRENT_TIMESTAMP + (10 ||' minutes')::interval")
+    @GeneratedValue
     private java.sql.Timestamp expiryDate;
 }
