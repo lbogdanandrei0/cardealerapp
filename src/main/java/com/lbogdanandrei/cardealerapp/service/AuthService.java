@@ -1,5 +1,7 @@
 package com.lbogdanandrei.cardealerapp.service;
 
+import com.lbogdanandrei.cardealerapp.exceptions.InvalidTokenException;
+import com.lbogdanandrei.cardealerapp.exceptions.UserNotFoundException;
 import com.lbogdanandrei.cardealerapp.model.TokenModel;
 import com.lbogdanandrei.cardealerapp.model.UserModel;
 import com.lbogdanandrei.cardealerapp.model.dto.RegisterRequestDTO;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -45,5 +48,19 @@ public class AuthService {
         //TODO send token to user to activate account
         tokenRepository.save(userToken);
         return token;
+    }
+
+    public TokenModel getToken(String token){
+        return tokenRepository.findTokenByToken(token).orElseThrow(() -> new InvalidTokenException(token));
+    }
+
+    public void activateUser(TokenModel requestToken){
+        Optional<UserModel> user = userRepository.findUserByEmail(requestToken.getUser().getEmail());
+        if(user.isPresent() && !user.get().isEnabled()){
+            user.get().setEnabled(true);
+            userRepository.save(user.get());
+        }else{
+            throw new UserNotFoundException(user.get());
+        }
     }
 }

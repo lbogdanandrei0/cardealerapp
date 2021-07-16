@@ -21,6 +21,7 @@ public class TokenModel {
     private String token;
 
     @OneToOne
+    @JoinColumn(name = "email", referencedColumnName = "email")
     private UserModel user;
 
     @Column(name = "expiry_date", columnDefinition = "default CURRENT_TIMESTAMP + (10 ||' minutes')::interval")
