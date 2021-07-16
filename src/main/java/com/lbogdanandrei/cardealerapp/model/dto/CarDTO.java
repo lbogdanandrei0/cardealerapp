@@ -35,5 +35,6 @@ public class CarDTO implements Serializable {
     @Positive
     private float price;
 
+    @NotEmpty
     private String vin;
 }

@@ -1,8 +1,6 @@
 package com.lbogdanandrei.cardealerapp.controller;
 
-import com.lbogdanandrei.cardealerapp.exceptions.CarAlreadyExistsException;
-import com.lbogdanandrei.cardealerapp.exceptions.DealerAlreadyExistsException;
-import com.lbogdanandrei.cardealerapp.exceptions.DealerNotFoundException;
+import com.lbogdanandrei.cardealerapp.exceptions.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +30,16 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler(value = CarAlreadyExistsException.class)
     protected ResponseEntity<Object> handleCarAlreadyExists(RuntimeException ex, WebRequest request){
         return handleExceptionInternal(ex, "This car already exists", new HttpHeaders(), HttpStatus.CONFLICT, request);
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(value = InvalidTokenException.class)
+    protected ResponseEntity<Object> handleInvalidToken(RuntimeException ex, WebRequest request){
+        return handleExceptionInternal(ex, "Invalid token, activation failed", new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(value = UserNotFoundException.class)
+    protected ResponseEntity<Object> handleUserNotFound(RuntimeException ex, WebRequest request){
+        return handleExceptionInternal(ex, "User was not activated (invalid email or already activated)", new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
 }
