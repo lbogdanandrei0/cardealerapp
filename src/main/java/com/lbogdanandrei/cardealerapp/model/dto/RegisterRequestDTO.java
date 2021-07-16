@@ -9,9 +9,9 @@ import javax.validation.constraints.NotBlank;
 @Setter
 public class RegisterRequestDTO {
 
-    @NotBlank
+    @NotBlank(message = "email is mandatory")
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "password is mandatory")
     private String password;
 }

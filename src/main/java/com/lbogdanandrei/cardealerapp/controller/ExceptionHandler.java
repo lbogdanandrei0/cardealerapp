@@ -42,4 +42,8 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, "User was not activated (invalid email or already activated)", new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
+    @org.springframework.web.bind.annotation.ExceptionHandler(value = UserAlreadyExistException.class)
+    protected ResponseEntity<Object> handleUserAlreadyExists(RuntimeException ex, WebRequest request){
+        return handleExceptionInternal(ex, "User already exists", new HttpHeaders(), HttpStatus.CONFLICT, request);
+    }
 }

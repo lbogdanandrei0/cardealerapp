@@ -3,6 +3,7 @@ package com.lbogdanandrei.cardealerapp.controller;
 import com.lbogdanandrei.cardealerapp.model.DealerModel;
 import com.lbogdanandrei.cardealerapp.model.dto.CarDTO;
 import com.lbogdanandrei.cardealerapp.model.dto.DealerDTO;
+import com.lbogdanandrei.cardealerapp.service.AuthService;
 import com.lbogdanandrei.cardealerapp.service.CarService;
 import com.lbogdanandrei.cardealerapp.service.DealerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +23,21 @@ import java.util.Map;
 public class AppController {
 
     @Autowired
-    DealerService dealerService;
+    private DealerService dealerService;
     @Autowired
-    CarService carService;
+    private CarService carService;
+    @Autowired
+    private AuthService authService;
 
     @GetMapping("/dealers")
     public ResponseEntity<List<DealerDTO>> getAllDealers(){
+        System.out.println("Logged in: " + authService.isLoggedIn());
         return ResponseEntity.ok(dealerService.getAllDealersDTO());
     }
 
-    @GetMapping
+    @GetMapping("/cars")
     public ResponseEntity<List<CarDTO>> getAllCars(){
+        System.out.println("Logged in: " + authService.isLoggedIn());
         return ResponseEntity.ok(carService.getAllCarsDTO());
     }
 
@@ -44,12 +49,14 @@ public class AppController {
 
     @PostMapping("/dealers/new")
     public ResponseEntity<Object> saveNewDealer(@Valid @RequestBody DealerDTO dealer){
+        System.out.println("Logged in: " + authService.isLoggedIn());
         DealerDTO response = dealerService.saveNewDealer(dealer);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/cars/new")
     public ResponseEntity<Object> saveNewCar(@Valid @RequestBody CarDTO car){
+        System.out.println("Logged in: " + authService.isLoggedIn());
         DealerModel dealer = dealerService.findDealerByAddress(car.getLocation());
         CarDTO response = carService.saveNewCar(car, dealer);
         return ResponseEntity.ok(response);

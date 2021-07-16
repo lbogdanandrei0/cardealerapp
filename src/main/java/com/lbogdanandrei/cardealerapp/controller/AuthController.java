@@ -31,17 +31,17 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public AuthenticationResponse login(@RequestBody LoginRequestDTO requestBody){
+    public AuthenticationResponse login(@Valid @RequestBody LoginRequestDTO requestBody){
         return authService.login(requestBody);
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<String> logout(@RequestBody RefreshTokenRequestDTO request){
+    public ResponseEntity<String> logout(@Valid @RequestBody RefreshTokenRequestDTO request){
         return authService.logout(request);
     }
 
     @PostMapping("/refreshToken")
-    public AuthenticationResponse refreshToken(@RequestBody RefreshTokenRequestDTO request){
+    public AuthenticationResponse refreshToken(@Valid @RequestBody RefreshTokenRequestDTO request){
         return authService.refreshToken(request);
     }
 
