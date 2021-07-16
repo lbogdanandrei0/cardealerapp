@@ -2,50 +2,64 @@ package com.lbogdanandrei.cardealerapp.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
 import java.math.BigInteger;
 
 @Getter
 @Setter
+@ToString
 @Entity(name = "car")
 public class CarModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private int id;
 
-    @Column
+    @Column(name = "location")
     @NonNull
-    private BigInteger location;
+    private int location;
 
-    @Column
+    @Column(name = "brand")
     @NonNull
+    @Enumerated(EnumType.STRING)
     private CarBrand brand;
 
-    @Column
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
     private CarType type;
 
-    @Column
-    private boolean is_new;
+    @Column(name = "is_new")
+    private boolean isNew;
 
-    @Column
-    private boolean had_accident;
+    @Column(name = "had_accident")
+    private boolean hadAccident;
 
-    @Column
-    private short engine_capacity;
+    @Column(name = "engine_capacity")
+    @Positive
+    private int engineCapacity;
 
-    @Column
-    private short engine_power;
+    @Column(name = "engine_power")
+    @Positive
+    private int enginePower;
 
-    @Column
-    private java.sql.Date date_of_fabrication;
+    @Column(name = "date_of_fabrication")
+    private java.sql.Date dateOfFabrication;
 
-    @Column
+    @Column(name = "price")
+    @Positive
     private float price;
 
-    @Column
-    @Lob
+    @Column(name = "description")
     private String description;
+
+    @Column(name = "vin", unique = true)
+    @NonNull
+    private String vin;
 }

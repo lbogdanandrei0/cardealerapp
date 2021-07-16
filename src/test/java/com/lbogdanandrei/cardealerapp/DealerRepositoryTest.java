@@ -1,5 +1,7 @@
 package com.lbogdanandrei.cardealerapp;
 
+import com.lbogdanandrei.cardealerapp.model.DealerModel;
+import com.lbogdanandrei.cardealerapp.model.dto.DealerDTO;
 import com.lbogdanandrei.cardealerapp.repository.DealerRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +23,13 @@ public class DealerRepositoryTest {
 
     @Test
     public void findAll_shouldGetAllRecords() {
-        Assertions.assertEquals(dealerRepository.findAll().size(), dealerRepository.getNrOfRecords().intValue());
+        Assertions.assertEquals(dealerRepository.findAll().size(), dealerRepository.getNrOfRecords());
+    }
+
+    @Test
+    public void findDealerByAddress_shouldGetDealerByAddress(){
+        Assertions.assertEquals("adr1", dealerRepository.findDealerByAddress("adr1").get().getAddress());
+        Assertions.assertEquals("adr2", dealerRepository.findDealerByAddress("adr2").get().getAddress());
     }
 
 }
