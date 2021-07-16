@@ -4,12 +4,17 @@ import com.lbogdanandrei.cardealerapp.exceptions.InvalidTokenException;
 import com.lbogdanandrei.cardealerapp.exceptions.UserNotFoundException;
 import com.lbogdanandrei.cardealerapp.model.TokenModel;
 import com.lbogdanandrei.cardealerapp.model.UserModel;
-import com.lbogdanandrei.cardealerapp.model.dto.AuthentificationResponse;
+import com.lbogdanandrei.cardealerapp.model.dto.AuthenticationResponse;
 import com.lbogdanandrei.cardealerapp.model.dto.LoginRequestDTO;
+import com.lbogdanandrei.cardealerapp.model.dto.RefreshTokenRequestDTO;
 import com.lbogdanandrei.cardealerapp.model.dto.RegisterRequestDTO;
 import com.lbogdanandrei.cardealerapp.repository.TokenRepository;
 import com.lbogdanandrei.cardealerapp.repository.UserRepository;
 import com.lbogdanandrei.cardealerapp.security.JwtGenerator;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,10 +41,13 @@ public class AuthService {
     private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    private AuthenticationManager authentificationManager;
+    private AuthenticationManager authenticationManager;
 
     @Autowired
     private JwtGenerator jwtGenerator;
+
+    @Autowired
+    private RefreshTokenService refreshTokenService;
 
     public void register(RegisterRequestDTO request){
         UserModel toRegister = new UserModel();
@@ -58,18 +66,19 @@ public class AuthService {
         TokenModel userToken = new TokenModel();
         userToken.setToken(token);
         userToken.setUser(toRegister);
-        //userToken.setExpiryDate(); by default 10 min
+        userToken.setExpiryDate(Timestamp.from(Instant.now().plusMillis(JwtGenerator.jwtExpirationInMillis)));
         //TODO send token to user to activate account
         tokenRepository.save(userToken);
         return token;
     }
 
-    public TokenModel getToken(String token){
-        return tokenRepository.findTokenByToken(token).orElseThrow(() -> new InvalidTokenException(token));
-    }
-
-    public void activateUser(TokenModel requestToken){
-        Optional<UserModel> user = userRepository.findUserByEmail(requestToken.getUser().getEmail());
+    public void activateUserWithToken(String token){
+        Optional<TokenModel> tokenModel = tokenRepository.findTokenByToken(token);
+        if(!tokenModel.isPresent())
+            throw new InvalidTokenException(token);
+        if(tokenModel.get().getExpiryDate().before(Timestamp.from(Instant.now())))
+            throw new InvalidTokenException(token, true);
+        Optional<UserModel> user = userRepository.findUserByEmail(tokenModel.get().getUser().getEmail());
         if(user.isPresent() && !user.get().isEnabled()){
             user.get().setEnabled(true);
             userRepository.save(user.get());
@@ -78,14 +87,37 @@ public class AuthService {
         }
     }
 
-    public AuthentificationResponse login(LoginRequestDTO requestBody) {
-        Authentication auth = authentificationManager.authenticate(new UsernamePasswordAuthenticationToken(requestBody.getEmail(), requestBody.getPassword()));
+    public AuthenticationResponse login(LoginRequestDTO requestBody) {
+        Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestBody.getEmail(), requestBody.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(auth);
         String token = jwtGenerator.generateToken(auth);
-        return AuthentificationResponse.builder()
+        return AuthenticationResponse.builder()
                 .token(token)
+                .refreshToken(refreshTokenService.generateNewToken().getToken())
                 .email(requestBody.getEmail())
                 .expiryAt(Timestamp.from(Instant.now().plusMillis(JwtGenerator.jwtExpirationInMillis)))
                 .build();
+    }
+
+    public AuthenticationResponse refreshToken(RefreshTokenRequestDTO requestBody){
+        refreshTokenService.isValid(requestBody.getRefreshToken());
+        String newToken = jwtGenerator.generateTokenWithUserName(requestBody.getEmail());
+        return AuthenticationResponse.builder()
+                .token(newToken)
+                .refreshToken(refreshTokenService.generateNewToken().getToken())
+                .expiryAt(Timestamp.from(Instant.now().plusMillis(JwtGenerator.jwtExpirationInMillis)))
+                .email(requestBody.getEmail())
+                .build();
+    }
+
+    public boolean isLoggedIn(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth.isAuthenticated();
+    }
+
+    public ResponseEntity<String> logout(RefreshTokenRequestDTO requestBody){
+        refreshTokenService.isValid(requestBody.getRefreshToken());
+        refreshTokenService.deleteToken(requestBody.getRefreshToken());
+        return new ResponseEntity<>("Logout successful", HttpStatus.OK);
     }
 }

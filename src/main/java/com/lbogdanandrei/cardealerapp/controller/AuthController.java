@@ -1,8 +1,8 @@
 package com.lbogdanandrei.cardealerapp.controller;
 
-import com.lbogdanandrei.cardealerapp.model.TokenModel;
-import com.lbogdanandrei.cardealerapp.model.dto.AuthentificationResponse;
+import com.lbogdanandrei.cardealerapp.model.dto.AuthenticationResponse;
 import com.lbogdanandrei.cardealerapp.model.dto.LoginRequestDTO;
+import com.lbogdanandrei.cardealerapp.model.dto.RefreshTokenRequestDTO;
 import com.lbogdanandrei.cardealerapp.model.dto.RegisterRequestDTO;
 import com.lbogdanandrei.cardealerapp.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -27,14 +26,23 @@ public class AuthController {
 
     @GetMapping("/activate/{token}")
     public ResponseEntity<String> activateUser(@PathVariable("token") String token){
-        TokenModel tokenModel = authService.getToken(token);
-        authService.activateUser(tokenModel);
+        authService.activateUserWithToken(token);
         return ResponseEntity.ok("User activated");
     }
 
     @PostMapping("/signin")
-    public AuthentificationResponse login(@RequestBody LoginRequestDTO requestBody){
+    public AuthenticationResponse login(@RequestBody LoginRequestDTO requestBody){
         return authService.login(requestBody);
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<String> logout(@RequestBody RefreshTokenRequestDTO request){
+        return authService.logout(request);
+    }
+
+    @PostMapping("/refreshToken")
+    public AuthenticationResponse refreshToken(@RequestBody RefreshTokenRequestDTO request){
+        return authService.refreshToken(request);
     }
 
 }
