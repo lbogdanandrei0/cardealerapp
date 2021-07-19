@@ -13,7 +13,7 @@ import static java.util.Date.from;
 @Service
 public class JwtGenerator {
 
-    public static final long jwtExpirationInMillis = 600000;
+    public static final long jwtExpirationInMillis = 600000; //10 min
 
     public String generateToken(Authentication authentication) {
         org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();

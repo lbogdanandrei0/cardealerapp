@@ -1,8 +1,6 @@
 package com.lbogdanandrei.cardealerapp.service;
 
-import com.lbogdanandrei.cardealerapp.exceptions.InvalidTokenException;
-import com.lbogdanandrei.cardealerapp.exceptions.UserAlreadyExistException;
-import com.lbogdanandrei.cardealerapp.exceptions.UserNotFoundException;
+import com.lbogdanandrei.cardealerapp.exceptions.*;
 import com.lbogdanandrei.cardealerapp.model.TokenModel;
 import com.lbogdanandrei.cardealerapp.model.UserModel;
 import com.lbogdanandrei.cardealerapp.model.dto.AuthenticationResponse;
@@ -54,6 +52,9 @@ public class AuthService {
     @Autowired
     private RefreshTokenService refreshTokenService;
 
+    @Autowired
+    private EmailService emailService;
+
     @Transactional
     public void register(RegisterRequestDTO request){
         UserModel toRegister = new UserModel();
@@ -66,6 +67,9 @@ public class AuthService {
 
             String token = generateToken(toRegister);
             //TODO send token to user to activate account
+
+            String mailContent = "Access http://localhost:8080/api/auth/activate/" + token + " to activate the account";
+            emailService.send(toRegister.getEmail(), "Account Activation", mailContent);
         }catch(Exception e){
             throw new UserAlreadyExistException(request.getEmail());
         }
@@ -92,11 +96,16 @@ public class AuthService {
             user.get().setEnabled(true);
             userRepository.save(user.get());
         }else{
-            throw new UserNotFoundException(user.get());
+            throw new UserNotFoundException(user.get().getEmail(), true);
         }
     }
 
     public AuthenticationResponse login(LoginRequestDTO requestBody) {
+        Optional<UserModel> toLogin = userRepository.findUserByEmail(requestBody.getEmail());
+        if(toLogin.isPresent() && !toLogin.get().isEnabled())
+            throw new UserWithInvalidTokenException(toLogin);
+        else if(!toLogin.isPresent())
+            throw new UserNotFoundException(requestBody.getEmail());
         Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestBody.getEmail(), requestBody.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(auth);
         String token = jwtGenerator.generateToken(auth);
@@ -130,5 +139,23 @@ public class AuthService {
         Authentication auth = new AnonymousAuthenticationToken("Anonymous user", "Anonymous user", Collections.singletonList(new SimpleGrantedAuthority("ROLE_ANONYMOUS")));
         SecurityContextHolder.getContext().setAuthentication(auth);
         return new ResponseEntity<>("Logout successful", HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity<String> resetToken(String email) {
+        Optional<UserModel> user = userRepository.findUserByEmail(email);
+        if(!user.isPresent())
+            throw new UserNotFoundException(email);
+        else if(user.get().isEnabled())
+            throw new UserAlreadyActivatedException(email);
+        Optional<TokenModel> token = tokenRepository.findTokenByEmail(email);
+        if(token.isPresent() && token.get().getExpiryDate().after(Timestamp.from(Instant.now())))
+            throw new TokenStillValidException(token.get().getToken());
+        token.get().setToken(UUID.randomUUID().toString());
+        token.get().setExpiryDate(Timestamp.from(Instant.now().plusMillis(JwtGenerator.jwtExpirationInMillis)));
+        tokenRepository.save(token.get());
+        String mailContent = "Access http://localhost:8080/api/auth/activate/" + token.get().getToken() + " to activate you account";
+        emailService.send(email, "New Activation Token", mailContent);
+        return ResponseEntity.ok("Another token was generated for user " + email);
     }
 }

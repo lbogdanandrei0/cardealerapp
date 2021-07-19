@@ -45,4 +45,9 @@ public class AuthController {
         return authService.refreshToken(request);
     }
 
+    @GetMapping("/resetToken/{email}")
+    public ResponseEntity<String> resetToken(@PathVariable("email") String email){
+        return authService.resetToken(email);
+    }
+
 }

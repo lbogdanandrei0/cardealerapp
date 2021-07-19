@@ -4,15 +4,9 @@ import com.lbogdanandrei.cardealerapp.exceptions.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @ControllerAdvice
 public class ExceptionHandler extends ResponseEntityExceptionHandler {
@@ -34,16 +28,31 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
 
     @org.springframework.web.bind.annotation.ExceptionHandler(value = InvalidTokenException.class)
     protected ResponseEntity<Object> handleInvalidToken(RuntimeException ex, WebRequest request){
-        return handleExceptionInternal(ex, "Invalid token, activation failed", new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler(value = UserNotFoundException.class)
     protected ResponseEntity<Object> handleUserNotFound(RuntimeException ex, WebRequest request){
-        return handleExceptionInternal(ex, "User was not activated (invalid email or already activated)", new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+        return handleExceptionInternal(ex,ex.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler(value = UserAlreadyExistException.class)
     protected ResponseEntity<Object> handleUserAlreadyExists(RuntimeException ex, WebRequest request){
-        return handleExceptionInternal(ex, "User already exists", new HttpHeaders(), HttpStatus.CONFLICT, request);
+        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.CONFLICT, request);
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(value = UserWithInvalidTokenException.class)
+    protected ResponseEntity<Object> handleUserWithInvalidToken(RuntimeException ex, WebRequest request){
+        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(value = UserAlreadyActivatedException.class)
+    protected ResponseEntity<Object> handleUserAlreadyActivated(RuntimeException ex, WebRequest request){
+        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.CONFLICT, request);
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(value = TokenStillValidException.class)
+    protected ResponseEntity<Object> handleTokenStillValid(RuntimeException ex, WebRequest request){
+        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 }

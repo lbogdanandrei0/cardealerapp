@@ -1,7 +1,5 @@
 package com.lbogdanandrei.cardealerapp.security;
 
-import com.lbogdanandrei.cardealerapp.repository.RefreshTokenRepository;
-import com.lbogdanandrei.cardealerapp.service.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;

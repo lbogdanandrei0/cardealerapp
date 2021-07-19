@@ -31,13 +31,11 @@ public class AppController {
 
     @GetMapping("/dealers")
     public ResponseEntity<List<DealerDTO>> getAllDealers(){
-        System.out.println("Logged in: " + authService.isLoggedIn());
         return ResponseEntity.ok(dealerService.getAllDealersDTO());
     }
 
     @GetMapping("/cars")
     public ResponseEntity<List<CarDTO>> getAllCars(){
-        System.out.println("Logged in: " + authService.isLoggedIn());
         return ResponseEntity.ok(carService.getAllCarsDTO());
     }
 
@@ -49,14 +47,12 @@ public class AppController {
 
     @PostMapping("/dealers/new")
     public ResponseEntity<Object> saveNewDealer(@Valid @RequestBody DealerDTO dealer){
-        System.out.println("Logged in: " + authService.isLoggedIn());
         DealerDTO response = dealerService.saveNewDealer(dealer);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/cars/new")
     public ResponseEntity<Object> saveNewCar(@Valid @RequestBody CarDTO car){
-        System.out.println("Logged in: " + authService.isLoggedIn());
         DealerModel dealer = dealerService.findDealerByAddress(car.getLocation());
         CarDTO response = carService.saveNewCar(car, dealer);
         return ResponseEntity.ok(response);
