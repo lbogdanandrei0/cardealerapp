@@ -16,9 +16,6 @@ public class TaskService {
     @Autowired
     private TaskRepository taskRepository;
 
-    @Autowired
-    EntityManager entityManager;
-
     public List<TaskModel> getAllTasks(){
         return taskRepository.findAll();
     }
@@ -27,6 +24,7 @@ public class TaskService {
         try {
             taskRepository.deleteById(id);
         }catch(Exception e){
+            System.out.println(e.getMessage());
             return false;
         }
         return true;
