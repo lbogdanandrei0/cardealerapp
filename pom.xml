@@ -113,8 +113,8 @@
 				<version>6.5.5</version>
 				<configuration>
 					<url>jdbc:postgresql://localhost:5432/cardealerapp</url>
-					<user>worker</user>
-					<password>minsecurity</password>
+					<user>postgres</user>
+					<password>postgres</password>
 				</configuration>
 			</plugin>
 
